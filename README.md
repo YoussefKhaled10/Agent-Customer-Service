@@ -33,7 +33,6 @@ The system follows three primary principles:
 - [Database Migrations](#database-migrations)
 - [Running the Application](#running-the-application)
 - [API Usage](#api-usage)
-- [Testing](#testing)
 - [Postman Verification](#postman-verification)
 - [End-to-End Demo](#end-to-end-demo)
 - [Grounding and Safety](#grounding-and-safety)
@@ -772,38 +771,6 @@ The debug endpoint should not be exposed in production because raw chunks and sc
 
 ---
 
-## Testing
-
-Run all tests:
-
-```bash
-python -m pytest tests -q
-```
-
-Agent tests:
-
-```bash
-python -m pytest tests -q -k "agent"
-```
-
-Catalog and order tests:
-
-```bash
-python -m pytest tests -q -k "catalog or order or confirmation"
-```
-
-RAG tests:
-
-```bash
-python -m pytest tests -q -k "rag or knowledge or retrieval"
-```
-
-Admin tests:
-
-```bash
-python -m pytest tests -q -k "admin"
-```
-
 ### Required Verification Areas
 
 - Direct LLM response.
@@ -1029,21 +996,6 @@ If a final-response LLM request fails after a successful tool result, the system
 
 ---
 
-## Future Improvements
-
-- Add background workers for document ingestion and re-indexing.
-- Add a secondary LLM provider for failover.
-- Add exponential backoff and retry policies.
-- Add product and category aliases for deterministic multilingual matching.
-- Persist compact structured conversation context.
-- Complete natural pending-action modification support.
-- Add RAG no-evidence thresholds and evaluation datasets.
-- Add observability for latency, token use, tools, and failures.
-- Add distributed locks for concurrent knowledge operations.
-- Add production WSGI deployment and centralized logging.
-- Add optional external messaging-channel integration.
-
----
 
 ## Repository Hygiene
 
@@ -1081,40 +1033,8 @@ python -m alembic heads
 
 ---
 
-## Team
 
-**Project:** PharmaCare AI Sales & Customer Service Agent  
-**Developer:** Youssef Khaled Mohamed Kilani  
-**Role:** Student and AI application developer
 
----
-
-## Final Submission Checklist
-
-- [ ] A clean database can run `alembic upgrade head`.
-- [ ] `.env.example` matches the configuration class.
-- [ ] No secrets are committed.
-- [ ] Guest, customer, admin, and inactive-account authorization are tested.
-- [ ] Category and product workflows are tested.
-- [ ] Product comparison grounding is verified.
-- [ ] Order creation requires confirmation.
-- [ ] Natural confirmation messages are understood by the LLM.
-- [ ] The final order response is written by the LLM from tool data.
-- [ ] Duplicate confirmation does not create another order.
-- [ ] Cancellation and stock restoration are tested.
-- [ ] Customer support and pharmacist request workflows are tested.
-- [ ] Conversation and tool audits are verified.
-- [ ] PDF upload and indexing are tested.
-- [ ] RAG multilingual retrieval, generation, sources, and citations are verified.
-- [ ] Inactive documents are excluded from retrieval.
-- [ ] Provider errors are sanitized.
-- [ ] Final-response fallback is tested.
-- [ ] Full pytest suite passes.
-- [ ] Postman collection passes.
-- [ ] Architecture screenshots are added.
-- [ ] Final demo is rehearsed.
-
----
 
 ## License and Data Notice
 
