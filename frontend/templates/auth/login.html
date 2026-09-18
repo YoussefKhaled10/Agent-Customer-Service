@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Sign In | PharmaCare{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">{% endblock %}
+{% block body %}
+<main class="auth-page">
+  <section class="auth-visual">
+    <a class="auth-brand" href="/chat"><span>+</span><div><strong>PharmaCare</strong><small>AI Sales &amp; Customer Service</small></div></a>
+    <div class="visual-copy"><span class="visual-icon">✦</span><h1>Smart help, whenever you need it</h1><p>Search products, ask grounded questions, track orders, and contact support through one assistant.</p><div class="visual-points"><span>✓ Secure</span><span>✓ Fast</span><span>✓ Available anytime</span></div></div>
+  </section>
+  <section class="auth-panel"><div class="auth-card"><div class="mobile-brand"><span>+</span><strong>PharmaCare</strong></div><p class="eyebrow">Welcome back</p><h2>Sign in to your account</h2><p class="subtitle">Continue your PharmaCare conversation and access account tools.</p><div class="auth-alert" data-auth-alert hidden></div>
+    <form data-login-form novalidate>
+      <label>Email address<input type="email" name="email" autocomplete="email" placeholder="name@gmail.com" required></label>
+      <label>Password<div class="password-field"><input type="password" name="password" autocomplete="current-password" placeholder="Enter your password" required><button type="button" data-toggle-password>Show</button></div></label>
+      <button class="auth-submit" type="submit"><span>Sign In</span><i data-submit-spinner hidden></i></button>
+    </form>
+    <div class="auth-footer">Don’t have an account? <a href="/register">Create one</a></div><a class="guest-link" href="/chat">Continue as guest</a>
+  </div></section>
+</main>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/auth.js') }}"></script>{% endblock %}

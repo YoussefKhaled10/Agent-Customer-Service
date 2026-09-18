@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Create Account | PharmaCare{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">{% endblock %}
+{% block body %}
+<main class="auth-page">
+  <section class="auth-visual register-visual"><a class="auth-brand" href="/chat"><span>+</span><div><strong>PharmaCare</strong><small>AI Sales &amp; Customer Service</small></div></a><div class="visual-copy"><span class="visual-icon">◎</span><h1>Your account, connected to real support</h1><p>View profile data, access orders, create confirmed purchases, and request human support securely.</p><div class="visual-points"><span>✓ JWT protected</span><span>✓ Private orders</span><span>✓ Real database</span></div></div></section>
+  <section class="auth-panel"><div class="auth-card register-card"><div class="mobile-brand"><span>+</span><strong>PharmaCare</strong></div><p class="eyebrow">Get started</p><h2>Create your account</h2><p class="subtitle">Use a Gmail address and a strong password with at least 12 characters.</p><div class="auth-alert" data-auth-alert hidden></div>
+    <form data-register-form novalidate><div class="register-grid">
+      <label>Full name<input name="name" autocomplete="name" placeholder="Your full name" required></label>
+      <label>Email address<input type="email" name="email" autocomplete="email" placeholder="name@gmail.com" required></label>
+      <label>Egyptian mobile <small>Optional</small><input type="tel" name="phone" autocomplete="tel" placeholder="01012345678"></label>
+      <label>Password<div class="password-field"><input type="password" name="password" autocomplete="new-password" placeholder="Strong password" minlength="12" required><button type="button" data-toggle-password>Show</button></div></label>
+      <label class="wide">Default shipping address <small>Optional</small><textarea name="default_shipping_address" placeholder="Address used for confirmed orders"></textarea></label>
+    </div><div class="password-rules"><span data-rule="length">12+ characters</span><span data-rule="upper">Uppercase</span><span data-rule="lower">Lowercase</span><span data-rule="number">Number</span><span data-rule="symbol">Special character</span></div>
+      <button class="auth-submit" type="submit"><span>Create Account</span><i data-submit-spinner hidden></i></button>
+    </form><div class="auth-footer">Already have an account? <a href="/login">Sign in</a></div><a class="guest-link" href="/chat">Continue as guest</a>
+  </div></section>
+</main>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/auth.js') }}"></script>{% endblock %}

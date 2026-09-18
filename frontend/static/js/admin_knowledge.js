@@ -1,0 +1,1 @@
+(()=>{const modal=document.querySelector('[data-upload-modal]');document.querySelector('[data-open-upload]')?.addEventListener('click',()=>{modal.hidden=false});document.querySelectorAll('[data-close-upload]').forEach(b=>b.addEventListener('click',()=>{modal.hidden=true}));})();

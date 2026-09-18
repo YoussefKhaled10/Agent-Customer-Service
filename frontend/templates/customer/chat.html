@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Customer Chat | PharmaCare<script src="{{ url_for('static', filename='js/admin_access.js') }}"></script>
+{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">{% endblock %}
+{% block body %}
+<div class="chat-app">
+  <header class="chat-topbar">
+    <a class="chat-brand" href="/chat"><span>+</span><div><strong>PharmaCare</strong><small>AI Sales &amp; Customer Service</small></div></a>
+    <div class="chat-top-actions"><a href="/admin" class="top-link" data-admin-link hidden>Admin Dashboard</a><div class="account-menu"><span class="chat-avatar" data-user-avatar>G</span><div><strong data-user-name>Guest</strong><small data-user-status>Public session</small></div><a href="/login" class="login-link" data-login-link>Sign in</a><button type="button" data-logout hidden>Logout</button></div></div>
+  </header>
+  <aside class="chat-sidebar">
+    <button class="new-chat" type="button" data-new-chat>+ New Chat</button>
+    <section class="history-section" data-history-section hidden><div class="sidebar-label">Conversations</div><div class="conversation-list" data-conversation-list></div></section>
+    <section class="guest-history" data-guest-history><strong>Save your conversations</strong><p>Sign in to access chats after closing the browser.</p><a href="/login">Sign in</a></section>
+    <div class="sidebar-label">Quick actions</div>
+    <button class="quick-action" data-message="وريني بيانات حسابي">◎ My Profile</button><button class="quick-action" data-message="عاوز أكلم موظف دعم">☏ Contact Support</button>
+  </aside>
+  <main class="chat-main">
+    <section class="conversation-head"><div class="bot-avatar">✦</div><div><h1 data-conversation-title>How can PharmaCare help?</h1><p><span></span> Agent available</p></div></section>
+    <section class="messages" data-messages><article class="message agent" data-welcome-message><div class="message-avatar">✦</div><div class="bubble"><strong>Welcome to PharmaCare</strong><p>Ask about products, orders, account information, or the indexed knowledge base.</p><div class="starter-grid"><button data-message="عندكم ترمومتر؟">Find a product</button><button data-message="الديسلفيرام بيعمل إيه مع الكحول؟">Ask a knowledge question</button></div></div></article></section>
+    <footer class="composer"><div class="composer-box"><textarea data-message-input rows="1" placeholder="Type your message..."></textarea><button class="send-button" type="button" data-send-message>➤</button></div><small>Responses may use RAG and business tools. Verify important medical information with a qualified professional.</small></footer>
+  </main>
+  <aside class="chat-details">
+    <h2>Conversation details</h2><div class="detail-stats single"><div><strong data-message-count>0</strong><span>Messages</span></div></div>
+    <section data-product-panel hidden><h3>Products found</h3><div data-product-results></div></section><section data-source-panel hidden><h3>Knowledge sources</h3><div data-source-results></div></section>
+  </aside>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/admin_access.js') }}"></script><script src="{{ url_for('static', filename='js/chat.js') }}"></script>{% endblock %}

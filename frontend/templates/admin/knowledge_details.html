@@ -1,0 +1,50 @@
+{% extends "base.html" %}{% block title %}{{ doc.title }} | PharmaCare{% endblock %}{% block body %}{% include "admin/_shell_start.html" %}<a href="/admin/knowledge">← Back to knowledge</a><section class="page-header"><div><h1>{{ doc.title }}</h1><p>Document #{{ doc.id }}</p></div><div class="actions">
+
+<button class="btn" onclick="document.getElementById('edit-modal').style.display='block'">Edit Metadata</button>
+<button class="btn" onclick="document.getElementById('replace-modal').style.display='block'">Replace PDF</button>
+
+<form method="post" action="/admin/knowledge/{{ doc.id }}/toggle"><button class="btn">{{ 'Deactivate' if doc.is_active else 'Activate' }}</button></form><form method="post" action="/admin/knowledge/{{ doc.id }}/reindex"><button class="btn primary">Re-index</button></form><form method="post" action="/admin/knowledge/{{ doc.id }}/delete" onsubmit="return confirm('Delete this document and every chunk?')"><button class="btn danger">Delete</button></form></div></section>{% with messages=get_flashed_messages(with_categories=true) %}{% for category,message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}{% endwith %}<section class="detail-grid"><article class="panel"><h2>Index information</h2><dl class="details-list"><div><dt>Status</dt><dd>{{ doc.index_status.value }}</dd></div><div><dt>Active</dt><dd>{{ doc.is_active }}</dd></div><div><dt>Category</dt><dd>{{ doc.category.value }}</dd></div><div><dt>Chunks</dt><dd>{{ doc.chunks|length }}</dd></div><div><dt>Embedding model</dt><dd>{{ doc.embedding_model or '-' }}</dd></div><div><dt>Dimension</dt><dd>{{ doc.embedding_dimension or '-' }}</dd></div><div><dt>Last indexed</dt><dd>{{ doc.last_indexed_at or '-' }}</dd></div></dl></article><article class="panel"><h2>Tags</h2><p>{{ doc.tags|join(', ') if doc.tags else 'No tags' }}</p>{% if doc.index_error %}<h3>Index issue</h3><p class="safe-error">Indexing failed. Review server logs for technical details.</p>{% endif %}<a class="admin-view-btn" href="/admin/knowledge/{{ doc.id }}/chunks">View chunks</a></article></section>
+
+<div id="edit-modal" style="display:none; position:fixed; top:10%; left:50%; transform:translate(-50%, 0); background:#fff; padding:2rem; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.15); z-index:100; min-width:400px;">
+  <h2>Edit Metadata</h2>
+  <form method="post" action="/admin/knowledge/{{ doc.id }}/edit">
+    <div style="margin-bottom:1rem;">
+      <label>Title</label>
+      <input type="text" name="title" value="{{ doc.title }}" required style="width:100%; padding:0.5rem; margin-top:0.5rem;">
+    </div>
+    <div style="margin-bottom:1rem;">
+      <label>Category</label>
+      <select name="category" style="width:100%; padding:0.5rem; margin-top:0.5rem;">
+        <option value="general" {% if doc.category.value == 'general' %}selected{% endif %}>General</option>
+        <option value="products" {% if doc.category.value == 'products' %}selected{% endif %}>Products</option>
+        <option value="guidelines" {% if doc.category.value == 'guidelines' %}selected{% endif %}>Guidelines</option>
+        <option value="policies" {% if doc.category.value == 'policies' %}selected{% endif %}>Policies</option>
+      </select>
+    </div>
+    <div style="margin-bottom:1rem;">
+      <label>Tags (comma separated)</label>
+      <input type="text" name="tags" value="{{ doc.tags|join(', ') if doc.tags else '' }}" style="width:100%; padding:0.5rem; margin-top:0.5rem;">
+    </div>
+    <div style="display:flex; justify-content:flex-end; gap:1rem;">
+      <button type="button" class="btn" onclick="document.getElementById('edit-modal').style.display='none'">Cancel</button>
+      <button type="submit" class="btn primary">Save Changes</button>
+    </div>
+  </form>
+</div>
+
+<div id="replace-modal" style="display:none; position:fixed; top:10%; left:50%; transform:translate(-50%, 0); background:#fff; padding:2rem; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.15); z-index:100; min-width:400px;">
+  <h2>Replace PDF</h2>
+  <p style="margin-bottom:1rem; font-size:0.9rem; color:#666;">Upload a new PDF to replace the current document's contents and re-chunk. The document ID will remain the same.</p>
+  <form method="post" action="/admin/knowledge/{{ doc.id }}/replace" enctype="multipart/form-data">
+    <div style="margin-bottom:1rem;">
+      <label>New PDF File</label>
+      <input type="file" name="file" accept="application/pdf" required style="width:100%; padding:0.5rem; margin-top:0.5rem;">
+    </div>
+    <div style="display:flex; justify-content:flex-end; gap:1rem;">
+      <button type="button" class="btn" onclick="document.getElementById('replace-modal').style.display='none'">Cancel</button>
+      <button type="submit" class="btn danger">Upload & Replace</button>
+    </div>
+  </form>
+</div>
+
+{% include "admin/_shell_end.html" %}{% endblock %}

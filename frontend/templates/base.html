@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}PharmaCare{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/pharmacare.css') }}">
+  {% block styles %}{% endblock %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/chat_history.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin_categories.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin_customers_orders.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin_support_monitoring.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin_knowledge.css') }}">
+</head>
+<body>
+{% block body %}{% endblock %}
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

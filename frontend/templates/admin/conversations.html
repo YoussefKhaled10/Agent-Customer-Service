@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} | PharmaCare{% endblock %}
+{% block body %}
+{% include "admin/_shell_start.html" %}
+<section class="page-header"><div><h1>Conversations</h1><p>Inspect customer and guest conversation history.</p></div></section>
+<form class="filter-bar" method="get"><input name="q" value="{{ request.args.get('q', '') }}" placeholder="Search"><select name="status"><option value="all">All statuses</option><option value="active">active</option><option value="completed">completed</option><option value="abandoned">abandoned</option></select><button class="btn primary">Search</button><a class="btn" href="/admin/conversations">Reset</a></form>
+<section class="panel"><div class="table-wrap"><table><thead><tr><th>Session</th><th>Customer</th><th>Status</th><th>Language</th><th>Messages</th><th>Pending</th><th></th></tr></thead><tbody>
+{% for x in data.items %}<tr><td><code>{{ x.session_id }}</code></td><td>{{ x.customer_id or "Guest" }}</td><td>{{ x.status.value if x.status.value is defined else x.status }}</td><td>{{ x.language or "-" }}</td><td>{{ x.messages|length }}</td><td>{{ "Yes" if x.pending_action else "No" }}</td><td><a class="admin-view-btn" href="/admin/conversations/{{ x.id }}">View</a></td></tr>{% else %}<tr><td class="empty" colspan="8">No records found.</td></tr>{% endfor %}</tbody></table></div></section>
+<div class="pagination">{% if data.page>1 %}<a class="btn" href="?page={ data.page-1 }">Previous</a>{% endif %}<span>Page {{ data.page }} of {{ data.pages }} · {{ data.total }} total</span>{% if data.page<data.pages %}<a class="btn" href="?page={ data.page+1 }">Next</a>{% endif %}</div>{% include "admin/_shell_end.html" %}
+{% endblock %}

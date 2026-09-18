@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} | PharmaCare{% endblock %}
+{% block body %}
+{% include "admin/_shell_start.html" %}
+<a href="/admin/tool-executions">← Back</a><section class="page-header"><h1>{{ item.tool_name }}</h1><p>{{ item.status }} · {{ item.execution_time_ms or 0 }} ms</p></section><section class="detail-grid"><article class="panel"><h2>Input (redacted)</h2><pre>{{ item.input_json|tojson(indent=2) }}</pre></article><article class="panel"><h2>Output (redacted)</h2><pre>{{ item.output_json|tojson(indent=2) }}</pre></article></section>{% if item.error_message %}<section class="panel alert">{{ item.error_message }}</section>{% endif %}{% include "admin/_shell_end.html" %}
+{% endblock %}

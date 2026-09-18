@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} | PharmaCare{% endblock %}
+{% block body %}
+{% include "admin/_shell_start.html" %}
+<section class="page-header"><div><h1>Tool Executions</h1><p>Audit tool status, latency, and associated requests.</p></div></section>
+<form class="filter-bar" method="get"><input name="q" value="{{ request.args.get('q', '') }}" placeholder="Search"><select name="status"><option value="all">All statuses</option><option value="pending">pending</option><option value="success">success</option><option value="failed">failed</option></select><button class="btn primary">Search</button><a class="btn" href="/admin/tool-executions">Reset</a></form>
+<section class="panel"><div class="table-wrap"><table><thead><tr><th>Tool</th><th>Status</th><th>Request ID</th><th>Conversation</th><th>Latency</th><th>Created</th><th></th></tr></thead><tbody>
+{% for x in data.items %}<tr><td>{{ x.tool_name }}</td><td>{{ x.status.value if x.status.value is defined else x.status }}</td><td><code>{{ x.request_id or "-" }}</code></td><td>{{ x.conversation_id or "-" }}</td><td>{{ x.execution_time_ms or 0 }} ms</td><td>{{ x.created_at }}</td><td><a class="admin-view-btn" href="/admin/tool-executions/{{ x.id }}">View</a></td></tr>{% else %}<tr><td class="empty" colspan="8">No records found.</td></tr>{% endfor %}</tbody></table></div></section>
+<div class="pagination">{% if data.page>1 %}<a class="btn" href="?page={ data.page-1 }">Previous</a>{% endif %}<span>Page {{ data.page }} of {{ data.pages }} · {{ data.total }} total</span>{% if data.page<data.pages %}<a class="btn" href="?page={ data.page+1 }">Next</a>{% endif %}</div>{% include "admin/_shell_end.html" %}
+{% endblock %}

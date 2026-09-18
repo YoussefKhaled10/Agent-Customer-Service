@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} | PharmaCare{% endblock %}
+{% block body %}
+{% include "admin/_shell_start.html" %}
+<section class="page-header"><div><h1>Pharmacist Requests</h1><p>Assign and track pharmacist contact requests.</p></div></section>
+<form class="filter-bar" method="get"><input name="q" value="{{ request.args.get('q', '') }}" placeholder="Search"><select name="status"><option value="all">All statuses</option><option value="pending">pending</option><option value="assigned">assigned</option><option value="contacted">contacted</option><option value="resolved">resolved</option><option value="cancelled">cancelled</option></select><button class="btn primary">Search</button><a class="btn" href="/admin/pharmacist-requests">Reset</a></form>
+<section class="panel"><div class="table-wrap"><table><thead><tr><th>Customer</th><th>Phone</th><th>Contact</th><th>Status</th><th>Assigned</th><th></th></tr></thead><tbody>
+{% for x in data.items %}<tr><td>{{ x.customer_name }}</td><td>{{ x.phone }}</td><td>{{ x.preferred_contact_method.value if x.preferred_contact_method.value is defined else x.preferred_contact_method }}</td><td>{{ x.status.value if x.status.value is defined else x.status }}</td><td>{{ x.assigned_to or "Unassigned" }}</td><td><a class="admin-view-btn" href="/admin/pharmacist-requests/{{ x.id }}">View</a></td></tr>{% else %}<tr><td class="empty" colspan="8">No records found.</td></tr>{% endfor %}</tbody></table></div></section>
+<div class="pagination">{% if data.page>1 %}<a class="btn" href="?page={ data.page-1 }">Previous</a>{% endif %}<span>Page {{ data.page }} of {{ data.pages }} · {{ data.total }} total</span>{% if data.page<data.pages %}<a class="btn" href="?page={ data.page+1 }">Next</a>{% endif %}</div>{% include "admin/_shell_end.html" %}
+{% endblock %}

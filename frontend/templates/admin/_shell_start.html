@@ -1,0 +1,33 @@
+<header class="topbar">
+  <a class="brand" href="{{ url_for('ui.admin') if false else '/admin' }}">
+    <span class="brand-mark">+</span>
+    <span><strong>PharmaCare</strong><small>AI Sales &amp; Customer Service</small></span>
+  </a>
+  <nav class="mode-switch" aria-label="Application sections">
+    <a href="/chat">Customer Chat</a>
+    <a class="active" href="/admin">Admin Dashboard</a>
+  </nav>
+  <div class="admin-user"><span class="avatar">A</span><span><strong>Admin</strong><small>Administrator</small></span></div>
+</header>
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <div class="sidebar-heading"><span>▦</span><div><strong>Admin Dashboard</strong><small>PharmaCare Control Center</small></div></div>
+    <nav class="sidebar-nav">
+      <a class="admin-link {% if active_page == 'overview' %}active{% endif %}" href="/admin"><span>▦</span>Overview</a>
+      <a class="admin-link {% if active_page == 'products' %}active{% endif %}" href="/admin/products"><span>□</span>Products</a>
+      <a class="admin-link {% if active_page == 'categories' %}active{% endif %}" href="/admin/categories"><span>▦</span>Categories</a>
+<a class="admin-link {% if active_page == 'customers' %}active{% endif %}" href="/admin/customers"><span>◎</span>Customers</a>
+<a class="admin-link {% if active_page == 'orders' %}active{% endif %}" href="/admin/orders"><span>▣</span>Orders</a>
+
+
+
+      
+      
+      <a class="admin-link {% if active_page == 'inquiries' %}active{% endif %}" href="/admin/inquiries"><span>☏</span>Inquiries</a>
+      <a class="admin-link {% if active_page == 'pharmacist' %}active{% endif %}" href="/admin/pharmacist-requests"><span>✚</span>Pharmacist Requests</a>
+      <a class="admin-link {% if active_page == 'conversations' %}active{% endif %}" href="/admin/conversations"><span>◌</span>Conversations</a>
+      <a class="admin-link {% if active_page == 'knowledge' %}active{% endif %}" href="/admin/knowledge"><span>▤</span>RAG Knowledge</a>
+      <a class="admin-link {% if active_page == 'tools' %}active{% endif %}" href="/admin/tool-executions"><span>⌁</span>Tool Executions</a>
+    </nav>
+  </aside>
+  <main class="admin-main">

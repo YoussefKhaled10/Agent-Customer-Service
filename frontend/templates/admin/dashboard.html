@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Admin Overview | PharmaCare{% endblock %}
+{% block body %}
+{% set active_page = 'overview' %}
+{% include "admin/_shell_start.html" %}
+<section class="page-header">
+  <div><h1>Overview</h1><p>Monitor the latest activity across PharmaCare.</p></div>
+  <div class="header-actions"><a class="btn btn-secondary" href="/admin/products">View Products</a><a class="btn btn-primary" href="/admin/products?open=create">+ Add Product</a></div>
+</section>
+{% set cards = [
+ ('Products', metrics.products|default(0), '□', 'blue'),
+ ('Customers', metrics.customers|default(0), '◎', 'purple'),
+ ('Orders', metrics.orders|default(0), '▣', 'pink'),
+ ('Open Inquiries', metrics.open_inquiries|default(0), '☏', 'amber'),
+ ('Pharmacist Requests', metrics.pharmacist_requests|default(0), '✚', 'violet'),
+ ('RAG Documents', metrics.rag_documents|default(0), '▤', 'cyan'),
+ ('RAG Chunks', metrics.rag_chunks|default(0), '▱', 'indigo')
+] %}
+<section class="metric-grid">
+{% for label, value, icon, color in cards %}
+  <article class="metric-card"><span class="metric-icon {{ color }}">{{ icon }}</span><strong>{{ value }}</strong><span>{{ label }}</span></article>
+{% endfor %}
+</section>
+<section class="dashboard-panels">
+  <article class="panel"><div class="panel-head"><div><h2>Recent Orders</h2><p>Latest transactions from the orders table</p></div></div>
+    <div class="table-wrap"><table><thead><tr><th>Order</th><th>Customer</th><th>Status</th><th>Total</th></tr></thead><tbody>
+    {% for order in recent_orders|default([]) %}<tr><td>{{ order.order_number }}</td><td>{{ order.customer_name }}</td><td><span class="badge">{{ order.status }}</span></td><td>{{ order.total }} {{ order.currency }}</td></tr>{% else %}<tr><td colspan="4" class="empty">No recent orders.</td></tr>{% endfor %}
+    </tbody></table></div>
+  </article>
+  <article class="panel"><div class="panel-head"><div><h2>RAG Knowledge Base</h2><p>Indexed documents and chunk counts</p></div></div>
+    <div class="document-list">{% for doc in knowledge_documents|default([]) %}<div class="document-row"><div><strong>{{ doc.title }}</strong><small>#{{ doc.id }} · {{ doc.chunk_count }} chunks</small></div><span class="badge">{{ doc.status }}</span></div>{% else %}<div class="empty">No knowledge documents.</div>{% endfor %}</div>
+  </article>
+</section>
+{% include "admin/_shell_end.html" %}
+{% endblock %}

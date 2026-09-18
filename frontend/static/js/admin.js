@@ -1,0 +1,1 @@
+document.querySelectorAll(".admin-nav").forEach(button=>button.addEventListener("click",()=>{document.querySelectorAll(".admin-nav").forEach(x=>x.classList.remove("active"));button.classList.add("active");document.getElementById("admin-page-title").textContent=button.dataset.page}));

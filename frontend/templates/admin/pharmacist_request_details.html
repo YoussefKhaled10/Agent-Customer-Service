@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} | PharmaCare{% endblock %}
+{% block body %}
+{% include "admin/_shell_start.html" %}
+<a href="/admin/pharmacist-requests">← Back</a><section class="page-header"><h1>Pharmacist Request #{{ item.id }}</h1></section><section class="panel"><h2>Question</h2><p>{{ item.question_summary }}</p><p>{{ item.customer_name }} · {{ item.phone }} · {{ item.email or '-' }}</p></section><form method="post" class="panel form-grid"><label>Status<select name="status">{% for s in ['pending','assigned','contacted','resolved','cancelled'] %}<option value="{{ s }}">{{ s }}</option>{% endfor %}</select></label><label>Assigned to<input name="assigned_to" value="{{ item.assigned_to or '' }}"></label><label class="wide">Internal notes<textarea name="internal_notes">{{ item.internal_notes or '' }}</textarea></label><button class="btn primary">Save changes</button></form>{% include "admin/_shell_end.html" %}
+{% endblock %}

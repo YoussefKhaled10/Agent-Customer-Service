@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} | PharmaCare{% endblock %}
+{% block body %}
+{% include "admin/_shell_start.html" %}
+<a href="/admin/conversations">← Back</a><section class="page-header"><h1>Conversation #{{ item.id }}</h1><p><code>{{ item.session_id }}</code></p></section>{% if item.pending_action %}<section class="panel alert"><h2>Pending action</h2><pre>{{ item.pending_action|tojson(indent=2) }}</pre><form method="post" action="/admin/conversations/{{ item.id }}/clear-pending"><button class="btn danger">Clear pending action</button></form></section>{% endif %}<section class="timeline">{% for m in item.messages %}<article class="message {{ m.role }}"><strong>{{ m.role }}</strong><p>{{ m.content }}</p><small>{{ m.created_at }}</small></article>{% else %}<div class="empty">No messages.</div>{% endfor %}</section>{% include "admin/_shell_end.html" %}
+{% endblock %}
