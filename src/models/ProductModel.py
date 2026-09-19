@@ -1,6 +1,6 @@
 from decimal import Decimal
 from typing import Any
-from sqlalchemy import func, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 from src.models.CategoryModel import CategoryModel
 from src.models.db_schemes.agent_db.schemes.product import Product
@@ -58,15 +58,43 @@ class ProductModel:
             resolved_category_id = category.id
 
         statement = select(Product).where(Product.is_active.is_(True))
-        if query and query.strip():
-            pattern = f"%{query.strip()}%"
-            statement = statement.where(Product.name.ilike(pattern) | Product.brand.ilike(pattern) |
-                                        Product.sku.ilike(pattern) | Product.description.ilike(pattern))
+        search_terms = cls._search_terms(query)
+        if search_terms:
+            searchable_columns = (
+                Product.name,
+                Product.brand,
+                Product.sku,
+                Product.short_description,
+                Product.description,
+            )
+            statement = statement.where(
+                or_(
+                    *(
+                        column.ilike(f"%{term}%")
+                        for term in search_terms
+                        for column in searchable_columns
+                    )
+                )
+            )
         if resolved_category_id: statement = statement.where(Product.category_id == resolved_category_id)
         if min_price is not None: statement = statement.where(Product.price >= min_price)
         if max_price is not None: statement = statement.where(Product.price <= max_price)
         if in_stock_only: statement = statement.where((Product.stock - Product.reserved_stock) > 0)
         return list(session.scalars(statement.order_by(Product.price, Product.id).limit(limit)).all())
+
+    @staticmethod
+    def _search_terms(query: str | None) -> list[str]:
+        if not query or not query.strip():
+            return []
+
+        # Split a conversational query into unique searchable terms. OR is
+        # applied across terms and product fields, so "protein creatine" can
+        # match either protein products or creatine products.
+        return list(dict.fromkeys(
+            term.casefold()
+            for term in query.split()
+            if term.strip()
+        ))
 
     @classmethod
     def update_stock(cls, session: Session, product_id: int, stock: int) -> Product:

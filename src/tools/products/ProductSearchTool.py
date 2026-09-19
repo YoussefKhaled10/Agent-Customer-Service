@@ -48,6 +48,13 @@ class ProductSearchTool(ToolInterface):
         )
 
     def execute(self, **arguments: Any) -> dict[str, Any]:
+        raw_query = arguments.get("query")
+        normalized_query = (
+            " ".join(str(raw_query).split())
+            if raw_query is not None and str(raw_query).strip()
+            else None
+        )
+        search_terms = ProductModel._search_terms(normalized_query)
         min_price = self._decimal_or_none(arguments.get("min_price"), "min_price")
         max_price = self._decimal_or_none(arguments.get("max_price"), "max_price")
         if min_price is not None and max_price is not None and min_price > max_price:
@@ -56,7 +63,7 @@ class ProductSearchTool(ToolInterface):
         with self.session_factory() as session:
             products = ProductModel.search(
                 session=session,
-                query=arguments.get("query"),
+                query=normalized_query,
                 category_id=arguments.get("category_id"),
                 category_slug=arguments.get("category_slug"),
                 category_name=arguments.get("category_name"),
@@ -71,7 +78,9 @@ class ProductSearchTool(ToolInterface):
             "count": len(serialized),
             "products": serialized,
             "filters": {
-                "query": arguments.get("query"),
+                "query": normalized_query,
+                "search_terms": search_terms,
+                "match_mode": "any_term_any_field" if search_terms else None,
                 "category_id": arguments.get("category_id"),
                 "category_slug": arguments.get("category_slug"),
                 "category_name": arguments.get("category_name"),
