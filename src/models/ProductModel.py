@@ -58,7 +58,7 @@ class ProductModel:
             resolved_category_id = category.id
 
         statement = select(Product).where(Product.is_active.is_(True))
-        search_terms = cls._search_terms(query)
+        search_terms = cls.search_terms(query)
         if search_terms:
             searchable_columns = (
                 Product.name,
@@ -68,13 +68,11 @@ class ProductModel:
                 Product.description,
             )
             statement = statement.where(
-                or_(
-                    *(
-                        column.ilike(f"%{term}%")
-                        for term in search_terms
-                        for column in searchable_columns
-                    )
-                )
+                or_(*(
+                    column.ilike(f"%{term}%")
+                    for term in search_terms
+                    for column in searchable_columns
+                ))
             )
         if resolved_category_id: statement = statement.where(Product.category_id == resolved_category_id)
         if min_price is not None: statement = statement.where(Product.price >= min_price)
@@ -83,13 +81,9 @@ class ProductModel:
         return list(session.scalars(statement.order_by(Product.price, Product.id).limit(limit)).all())
 
     @staticmethod
-    def _search_terms(query: str | None) -> list[str]:
+    def search_terms(query: str | None) -> list[str]:
         if not query or not query.strip():
             return []
-
-        # Split a conversational query into unique searchable terms. OR is
-        # applied across terms and product fields, so "protein creatine" can
-        # match either protein products or creatine products.
         return list(dict.fromkeys(
             term.casefold()
             for term in query.split()
