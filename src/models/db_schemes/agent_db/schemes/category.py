@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from sqlalchemy import String, Text
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import Boolean, Column, Integer, String, Text
+from sqlalchemy.orm import relationship
 
 from src.models.db_schemes.agent_db.base import Base, TimestampMixin
 
@@ -14,13 +14,13 @@ if TYPE_CHECKING:
 class Category(TimestampMixin, Base):
     __tablename__ = "categories"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(100), unique=True, nullable=False, index=True)
-    slug: Mapped[str] = mapped_column(String(120), unique=True, nullable=False, index=True)
-    description: Mapped[str | None] = mapped_column(Text, nullable=True)
-    is_active: Mapped[bool] = mapped_column(default=True, nullable=False, index=True)
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100), unique=True, nullable=False, index=True)
+    slug = Column(String(120), unique=True, nullable=False, index=True)
+    description = Column(Text, nullable=True)
+    is_active = Column(Boolean, default=True, nullable=False, index=True)
 
-    products: Mapped[list["Product"]] = relationship(
+    products = relationship("Product", 
         back_populates="category",
         lazy="selectin",
     )

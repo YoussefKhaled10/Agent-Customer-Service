@@ -27,35 +27,48 @@ class OrderModel:
     def create(cls, session: Session, *, customer_name: str, customer_email: str,
                phone: str | None, shipping_address: str, items: list[dict],
                idempotency_key: str, customer_notes: str | None = None) -> Order:
-        if not shipping_address.strip(): raise ValueError("Shipping address is required.")
-        if not items: raise ValueError("At least one order item is required.")
+        if not shipping_address.strip():
+            raise ValueError("Shipping address is required.")
+        if not items:
+            raise ValueError("At least one order item is required.")
         existing = session.scalar(select(Order).where(Order.idempotency_key == idempotency_key))
-        if existing: return existing
+        if existing:
+            return existing
         customer, _ = CustomerModel.get_or_create(session, customer_name, customer_email, phone, shipping_address)
         order = Order(order_number=f"PC-{uuid4().hex[:10].upper()}", customer_id=customer.id,
                       total_amount=Decimal("0.00"), currency="EGP", status=OrderStatus.PENDING,
                       shipping_address=shipping_address.strip(), customer_notes=customer_notes,
                       idempotency_key=idempotency_key)
-        session.add(order); session.flush()
+        session.add(order)
+        session.flush()
         total = Decimal("0.00")
         for requested in items:
             product_id, quantity = int(requested["product_id"]), int(requested["quantity"])
-            if quantity < 1: raise ValueError("Quantity must be positive.")
+            if quantity < 1:
+                raise ValueError("Quantity must be positive.")
             product = session.execute(select(Product).where(Product.id == product_id).with_for_update()).scalar_one_or_none()
-            if product is None or not product.is_active: raise ValueError(f"Product {product_id} is unavailable.")
-            if product.available_stock < quantity: raise ValueError(f"Insufficient stock for {product.name}.")
+            if product is None or not product.is_active:
+                raise ValueError(f"Product {product_id} is unavailable.")
+            if product.available_stock < quantity:
+                raise ValueError(f"Insufficient stock for {product.name}.")
             subtotal = product.price * quantity
             session.add(OrderItem(order_id=order.id, product_id=product.id, quantity=quantity,
                                   unit_price=product.price, subtotal=subtotal,
                                   product_name_snapshot=product.name, product_sku_snapshot=product.sku))
-            product.stock -= quantity; total += subtotal
-        order.total_amount = total; session.flush(); return order
+            product.stock -= quantity
+            total += subtotal
+        order.total_amount = total
+        session.flush()
+        return order
 
     @classmethod
     def update_status(cls, session: Session, order_number: str, status: OrderStatus) -> Order:
         order = cls.get_by_number(session, order_number)
-        if order is None: raise ValueError("Order was not found.")
-        order.status = status; session.flush(); return order
+        if order is None:
+            raise ValueError("Order was not found.")
+        order.status = status
+        session.flush()
+        return order
 
     @classmethod
     def get_for_customer_id(

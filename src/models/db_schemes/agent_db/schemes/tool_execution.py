@@ -3,9 +3,9 @@ from __future__ import annotations
 from datetime import datetime
 from typing import TYPE_CHECKING, Any
 
-from sqlalchemy import DateTime, Enum, ForeignKey, Integer, String, Text, func
+from sqlalchemy import Column, Integer, DateTime, Enum, ForeignKey, String, Text, func
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import relationship
 
 from src.models.db_schemes.agent_db.base import Base
 from src.models.db_schemes.agent_db.enums import ToolExecutionStatus
@@ -17,17 +17,17 @@ if TYPE_CHECKING:
 class ToolExecution(Base):
     __tablename__ = "tool_executions"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    conversation_id: Mapped[int | None] = mapped_column(
+    id = Column(Integer, primary_key=True)
+    conversation_id = Column(
         ForeignKey("conversations.id", ondelete="CASCADE"), nullable=True, index=True
     )
-    message_id: Mapped[int | None] = mapped_column(
+    message_id = Column(
         ForeignKey("messages.id", ondelete="SET NULL"), nullable=True, index=True
     )
-    tool_name: Mapped[str] = mapped_column(String(150), nullable=False, index=True)
-    input_json: Mapped[dict[str, Any]] = mapped_column(JSONB, default=dict, nullable=False)
-    output_json: Mapped[dict[str, Any] | None] = mapped_column(JSONB, nullable=True)
-    status: Mapped[ToolExecutionStatus] = mapped_column(
+    tool_name = Column(String(150), nullable=False, index=True)
+    input_json = Column(JSONB, default=dict, nullable=False)
+    output_json = Column(JSONB, nullable=True)
+    status = Column(
         Enum(
             ToolExecutionStatus,
             name="tool_execution_status",
@@ -37,14 +37,14 @@ class ToolExecution(Base):
         nullable=False,
         index=True,
     )
-    error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
-    execution_time_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    request_id: Mapped[str | None] = mapped_column(String(150), nullable=True, index=True)
-    created_at: Mapped[datetime] = mapped_column(
+    error_message = Column(Text, nullable=True)
+    execution_time_ms = Column(Integer, nullable=True)
+    request_id = Column(String(150), nullable=True, index=True)
+    created_at = Column(
         DateTime(timezone=True), server_default=func.now(), nullable=False, index=True
     )
 
-    conversation: Mapped["Conversation | None"] = relationship(
+    conversation = relationship("Conversation", 
         back_populates="tool_executions"
     )
-    message: Mapped["Message | None"] = relationship(back_populates="tool_executions")
+    message = relationship("Message", back_populates="tool_executions")

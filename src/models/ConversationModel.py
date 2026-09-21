@@ -13,25 +13,34 @@ class ConversationModel:
     def get_or_create(cls, session: Session, session_id: str,
                       customer_id: int | None = None, language: str | None = None) -> tuple[Conversation, bool]:
         conversation = cls.get_by_session_id(session, session_id)
-        if conversation: return conversation, False
+        if conversation:
+            return conversation, False
         conversation = Conversation(session_id=session_id, customer_id=customer_id,
                                     language=language, status=ConversationStatus.ACTIVE)
-        session.add(conversation); session.flush(); return conversation, True
+        session.add(conversation)
+        session.flush()
+        return conversation, True
 
     @classmethod
     def add_message(cls, session: Session, conversation_id: int, role: MessageRole,
                     content: str, intent: str | None = None, sub_intent: str | None = None,
                     safety_level: str | None = None,
                     metadata: dict[str, Any] | None = None) -> Message:
-        if not content.strip(): raise ValueError("Message content is required.")
+        if not content.strip():
+            raise ValueError("Message content is required.")
         message = Message(conversation_id=conversation_id, role=role, content=content.strip(),
             intent=intent, sub_intent=sub_intent, safety_level=safety_level,
             message_metadata=metadata or {})
-        session.add(message); session.flush(); return message
+        session.add(message)
+        session.flush()
+        return message
 
     @classmethod
     def set_pending_action(cls, session: Session, conversation_id: int,
                            pending_action: dict[str, Any] | None) -> Conversation:
         conversation = session.get(Conversation, conversation_id)
-        if conversation is None: raise ValueError("Conversation was not found.")
-        conversation.pending_action = pending_action; session.flush(); return conversation
+        if conversation is None:
+            raise ValueError("Conversation was not found.")
+        conversation.pending_action = pending_action
+        session.flush()
+        return conversation

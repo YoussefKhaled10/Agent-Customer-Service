@@ -12,18 +12,24 @@ class ToolExecutionModel:
         record = ToolExecution(conversation_id=conversation_id, message_id=message_id,
             tool_name=tool_name, input_json=input_json, status=ToolExecutionStatus.PENDING,
             request_id=request_id)
-        session.add(record); session.flush(); return record, perf_counter()
+        session.add(record)
+        session.flush()
+        return record, perf_counter()
 
     @classmethod
     def succeed(cls, session: Session, record: ToolExecution, started_at: float,
                 output_json: dict[str, Any]) -> ToolExecution:
-        record.status = ToolExecutionStatus.SUCCESS; record.output_json = output_json
+        record.status = ToolExecutionStatus.SUCCESS
+        record.output_json = output_json
         record.execution_time_ms = int((perf_counter() - started_at) * 1000)
-        session.flush(); return record
+        session.flush()
+        return record
 
     @classmethod
     def fail(cls, session: Session, record: ToolExecution, started_at: float,
              error: Exception | str) -> ToolExecution:
-        record.status = ToolExecutionStatus.FAILED; record.error_message = str(error)[:2000]
+        record.status = ToolExecutionStatus.FAILED
+        record.error_message = str(error)[:2000]
         record.execution_time_ms = int((perf_counter() - started_at) * 1000)
-        session.flush(); return record
+        session.flush()
+        return record

@@ -8,7 +8,6 @@ class OrderStatus(StrEnum):
     DELIVERED = "delivered"
     CANCELLED = "cancelled"
 
-
 class InquiryStatus(StrEnum):
     OPEN = "open"
     IN_PROGRESS = "in_progress"

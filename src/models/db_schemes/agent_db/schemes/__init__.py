@@ -1,25 +1,15 @@
-from src.models.db_schemes.agent_db.schemes.category import Category
-from src.models.db_schemes.agent_db.schemes.conversation import Conversation, Message
-from src.models.db_schemes.agent_db.schemes.customer import Customer
-from src.models.db_schemes.agent_db.schemes.customer_inquiry import CustomerInquiry
-from src.models.db_schemes.agent_db.schemes.knowledge import KnowledgeChunk, KnowledgeDocument
-from src.models.db_schemes.agent_db.schemes.order import Order, OrderItem
-from src.models.db_schemes.agent_db.schemes.pharmacist_request import PharmacistRequest
-from src.models.db_schemes.agent_db.schemes.product import Product
-from src.models.db_schemes.agent_db.schemes.tool_execution import ToolExecution
+from src.models.CategoryModel import CategoryModel
+from src.models.ConversationModel import ConversationModel
+from src.models.CustomerModel import CustomerModel
+from src.models.Database import SessionLocal, database_session, dispose_database_engine, engine, test_database_connection
+from src.models.InquiryModel import InquiryModel
+from src.models.KnowledgeModel import KnowledgeModel
+from src.models.OrderModel import OrderModel
+from src.models.PharmacistRequestModel import PharmacistRequestModel
+from src.models.ProductModel import ProductModel
+from src.models.ToolExecutionModel import ToolExecutionModel
 
-
-__all__ = [
-    "Category",
-    "Conversation",
-    "Customer",
-    "CustomerInquiry",
-    "KnowledgeChunk",
-    "KnowledgeDocument",
-    "Message",
-    "Order",
-    "OrderItem",
-    "PharmacistRequest",
-    "Product",
-    "ToolExecution",
-]
+__all__ = ["CategoryModel", "ConversationModel", "CustomerModel", "SessionLocal",
+"database_session", "dispose_database_engine", "engine", "test_database_connection",
+"InquiryModel", "KnowledgeModel", "OrderModel", "PharmacistRequestModel",
+"ProductModel", "ToolExecutionModel"]

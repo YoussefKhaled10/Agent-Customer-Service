@@ -3,9 +3,9 @@ from __future__ import annotations
 from datetime import datetime
 from typing import TYPE_CHECKING, Any
 
-from sqlalchemy import DateTime, Enum, ForeignKey, String, Text, func
+from sqlalchemy import Column, Integer, DateTime, Enum, ForeignKey, String, Text, func
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import relationship
 
 from src.models.db_schemes.agent_db.base import Base, TimestampMixin
 from src.models.db_schemes.agent_db.enums import ConversationStatus, MessageRole
@@ -18,14 +18,14 @@ if TYPE_CHECKING:
 class Conversation(TimestampMixin, Base):
     __tablename__ = "conversations"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    customer_id: Mapped[int | None] = mapped_column(
+    id = Column(Integer, primary_key=True)
+    customer_id = Column(
         ForeignKey("customers.id", ondelete="SET NULL"), nullable=True, index=True
     )
-    session_id: Mapped[str] = mapped_column(
+    session_id = Column(
         String(150), unique=True, nullable=False, index=True
     )
-    status: Mapped[ConversationStatus] = mapped_column(
+    status = Column(
         Enum(
             ConversationStatus,
             name="conversation_status",
@@ -35,17 +35,17 @@ class Conversation(TimestampMixin, Base):
         nullable=False,
         index=True,
     )
-    language: Mapped[str | None] = mapped_column(String(20), nullable=True)
-    pending_action: Mapped[dict[str, Any] | None] = mapped_column(JSONB, nullable=True)
+    language = Column(String(20), nullable=True)
+    pending_action = Column(JSONB, nullable=True)
 
-    customer: Mapped["Customer | None"] = relationship(back_populates="conversations")
-    messages: Mapped[list["Message"]] = relationship(
+    customer = relationship("Customer", back_populates="conversations")
+    messages = relationship("Message", 
         back_populates="conversation",
         cascade="all, delete-orphan",
         lazy="selectin",
         order_by="Message.created_at",
     )
-    tool_executions: Mapped[list["ToolExecution"]] = relationship(
+    tool_executions = relationship("ToolExecution", 
         back_populates="conversation", cascade="all, delete-orphan"
     )
 
@@ -53,11 +53,11 @@ class Conversation(TimestampMixin, Base):
 class Message(Base):
     __tablename__ = "messages"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    conversation_id: Mapped[int] = mapped_column(
+    id = Column(Integer, primary_key=True)
+    conversation_id = Column(
         ForeignKey("conversations.id", ondelete="CASCADE"), nullable=False, index=True
     )
-    role: Mapped[MessageRole] = mapped_column(
+    role = Column(
         Enum(
             MessageRole,
             name="message_role",
@@ -66,16 +66,16 @@ class Message(Base):
         nullable=False,
         index=True,
     )
-    content: Mapped[str] = mapped_column(Text, nullable=False)
-    intent: Mapped[str | None] = mapped_column(String(100), nullable=True, index=True)
-    sub_intent: Mapped[str | None] = mapped_column(String(100), nullable=True)
-    safety_level: Mapped[str | None] = mapped_column(String(50), nullable=True, index=True)
-    message_metadata: Mapped[dict[str, Any]] = mapped_column(JSONB, default=dict, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(
+    content = Column(Text, nullable=False)
+    intent = Column(String(100), nullable=True, index=True)
+    sub_intent = Column(String(100), nullable=True)
+    safety_level = Column(String(50), nullable=True, index=True)
+    message_metadata = Column(JSONB, default=dict, nullable=False)
+    created_at = Column(
         DateTime(timezone=True), server_default=func.now(), nullable=False, index=True
     )
 
-    conversation: Mapped["Conversation"] = relationship(back_populates="messages")
-    tool_executions: Mapped[list["ToolExecution"]] = relationship(
+    conversation = relationship("Conversation", back_populates="messages")
+    tool_executions = relationship("ToolExecution", 
         back_populates="message"
     )

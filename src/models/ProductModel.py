@@ -26,9 +26,12 @@ class ProductModel:
                warnings_json: list[str] | None = None, image_url: str | None = None) -> Product:
         name, sku = name.strip(), sku.strip().upper()
         price_value = Decimal(str(price))
-        if not name or not sku: raise ValueError("Product name and SKU are required.")
-        if price_value < 0 or stock < 0: raise ValueError("Price and stock cannot be negative.")
-        if cls.get_by_sku(session, sku): raise ValueError("A product with this SKU already exists.")
+        if not name or not sku:
+            raise ValueError("Product name and SKU are required.")
+        if price_value < 0 or stock < 0:
+            raise ValueError("Price and stock cannot be negative.")
+        if cls.get_by_sku(session, sku):
+            raise ValueError("A product with this SKU already exists.")
         product = Product(category_id=category_id, name=name,
             slug=cls.normalize_slug(slug or name), sku=sku,
             brand=brand.strip() if brand else None, price=price_value,
@@ -36,7 +39,9 @@ class ProductModel:
             short_description=short_description, description=description,
             features_json=features_json or {}, warnings_json=warnings_json or [],
             image_url=image_url, is_active=True)
-        session.add(product); session.flush(); return product
+        session.add(product)
+        session.flush()
+        return product
 
     @classmethod
     def search(cls, session: Session, query: str | None = None,
@@ -44,7 +49,8 @@ class ProductModel:
                category_name: str | None = None, min_price: Decimal | None = None,
                max_price: Decimal | None = None, in_stock_only: bool = True,
                limit: int = 20) -> list[Product]:
-        if limit < 1 or limit > 100: raise ValueError("Limit must be between 1 and 100.")
+        if limit < 1 or limit > 100:
+            raise ValueError("Limit must be between 1 and 100.")
         resolved_category_id = category_id
         if category_slug:
             category = CategoryModel.get_by_slug(session, category_slug)
@@ -74,10 +80,14 @@ class ProductModel:
                     for column in searchable_columns
                 ))
             )
-        if resolved_category_id: statement = statement.where(Product.category_id == resolved_category_id)
-        if min_price is not None: statement = statement.where(Product.price >= min_price)
-        if max_price is not None: statement = statement.where(Product.price <= max_price)
-        if in_stock_only: statement = statement.where((Product.stock - Product.reserved_stock) > 0)
+        if resolved_category_id:
+            statement = statement.where(Product.category_id == resolved_category_id)
+        if min_price is not None:
+            statement = statement.where(Product.price >= min_price)
+        if max_price is not None:
+            statement = statement.where(Product.price <= max_price)
+        if in_stock_only:
+            statement = statement.where((Product.stock - Product.reserved_stock) > 0)
         return list(session.scalars(statement.order_by(Product.price, Product.id).limit(limit)).all())
 
     @staticmethod
@@ -92,22 +102,34 @@ class ProductModel:
 
     @classmethod
     def update_stock(cls, session: Session, product_id: int, stock: int) -> Product:
-        if stock < 0: raise ValueError("Stock cannot be negative.")
+        if stock < 0:
+            raise ValueError("Stock cannot be negative.")
         product = cls.get_by_id(session, product_id)
-        if product is None: raise ValueError("Product was not found.")
-        if stock < product.reserved_stock: raise ValueError("Stock cannot be below reserved stock.")
-        product.stock = stock; session.flush(); return product
+        if product is None:
+            raise ValueError("Product was not found.")
+        if stock < product.reserved_stock:
+            raise ValueError("Stock cannot be below reserved stock.")
+        product.stock = stock
+        session.flush()
+        return product
 
     @classmethod
     def update_price(cls, session: Session, product_id: int, price: Decimal | str) -> Product:
         value = Decimal(str(price))
-        if value < 0: raise ValueError("Price cannot be negative.")
+        if value < 0:
+            raise ValueError("Price cannot be negative.")
         product = cls.get_by_id(session, product_id)
-        if product is None: raise ValueError("Product was not found.")
-        product.price = value; session.flush(); return product
+        if product is None:
+            raise ValueError("Product was not found.")
+        product.price = value
+        session.flush()
+        return product
 
     @classmethod
     def set_active_status(cls, session: Session, product_id: int, is_active: bool) -> Product:
         product = cls.get_by_id(session, product_id)
-        if product is None: raise ValueError("Product was not found.")
-        product.is_active = is_active; session.flush(); return product
+        if product is None:
+            raise ValueError("Product was not found.")
+        product.is_active = is_active
+        session.flush()
+        return product

@@ -18,17 +18,21 @@ class KnowledgeModel:
     def create_document(cls, session: Session, *, title: str, content: str,
                         category: KnowledgeCategory = KnowledgeCategory.GENERAL,
                         tags: list[str] | None = None) -> KnowledgeDocument:
-        if not title.strip() or not content.strip(): raise ValueError("Title and content are required.")
+        if not title.strip() or not content.strip():
+            raise ValueError("Title and content are required.")
         document = KnowledgeDocument(title=title.strip(), content=content.strip(), category=category,
             tags=tags or [], is_active=True, index_status=IndexStatus.PENDING,
             content_hash=cls.content_hash(content))
-        session.add(document); session.flush(); return document
+        session.add(document)
+        session.flush()
+        return document
 
     @classmethod
     def replace_chunks(cls, session: Session, document_id: int, chunks: list[dict[str, Any]],
                        embedding_model: str, embedding_dimension: int) -> KnowledgeDocument:
         document = cls.get_document(session, document_id)
-        if document is None: raise ValueError("Knowledge document was not found.")
+        if document is None:
+            raise ValueError("Knowledge document was not found.")
         session.execute(delete(KnowledgeChunk).where(KnowledgeChunk.document_id == document_id))
         for index, chunk in enumerate(chunks):
             session.add(KnowledgeChunk(document_id=document_id, chunk_index=index,
@@ -40,18 +44,24 @@ class KnowledgeModel:
         document.index_status = IndexStatus.INDEXED
         document.index_error = None
         document.last_indexed_at = func.now()
-        session.flush(); return document
+        session.flush()
+        return document
 
     @classmethod
     def mark_failed(cls, session: Session, document_id: int, error: str) -> KnowledgeDocument:
         document = cls.get_document(session, document_id)
-        if document is None: raise ValueError("Knowledge document was not found.")
-        document.index_status = IndexStatus.FAILED; document.index_error = error[:2000]
-        session.flush(); return document
+        if document is None:
+            raise ValueError("Knowledge document was not found.")
+        document.index_status = IndexStatus.FAILED
+        document.index_error = error[:2000]
+        session.flush()
+        return document
 
     @classmethod
     def deactivate(cls, session: Session, document_id: int) -> KnowledgeDocument:
         document = cls.get_document(session, document_id)
-        if document is None: raise ValueError("Knowledge document was not found.")
+        if document is None:
+            raise ValueError("Knowledge document was not found.")
         document.is_active = False
-        session.flush(); return document
+        session.flush()
+        return document

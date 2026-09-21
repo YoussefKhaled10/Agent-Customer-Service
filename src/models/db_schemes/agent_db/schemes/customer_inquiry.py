@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Enum, ForeignKey, String, Text
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import Column, Integer, Enum, ForeignKey, String, Text
+from sqlalchemy.orm import relationship
 
 from src.models.db_schemes.agent_db.base import Base, TimestampMixin
 from src.models.db_schemes.agent_db.enums import InquiryPriority, InquiryStatus
@@ -15,16 +15,16 @@ if TYPE_CHECKING:
 class CustomerInquiry(TimestampMixin, Base):
     __tablename__ = "customer_inquiries"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    customer_id: Mapped[int | None] = mapped_column(
+    id = Column(Integer, primary_key=True)
+    customer_id = Column(
         ForeignKey("customers.id", ondelete="SET NULL"), nullable=True, index=True
     )
-    customer_name: Mapped[str] = mapped_column(String(150), nullable=False)
-    email: Mapped[str] = mapped_column(String(320), nullable=False, index=True)
-    phone: Mapped[str | None] = mapped_column(String(30), nullable=True)
-    subject: Mapped[str] = mapped_column(String(250), nullable=False)
-    content: Mapped[str] = mapped_column(Text, nullable=False)
-    priority: Mapped[InquiryPriority] = mapped_column(
+    customer_name = Column(String(150), nullable=False)
+    email = Column(String(320), nullable=False, index=True)
+    phone = Column(String(30), nullable=True)
+    subject = Column(String(250), nullable=False)
+    content = Column(Text, nullable=False)
+    priority = Column(
         Enum(
             InquiryPriority,
             name="inquiry_priority",
@@ -34,7 +34,7 @@ class CustomerInquiry(TimestampMixin, Base):
         nullable=False,
         index=True,
     )
-    status: Mapped[InquiryStatus] = mapped_column(
+    status = Column(
         Enum(
             InquiryStatus,
             name="inquiry_status",
@@ -45,4 +45,4 @@ class CustomerInquiry(TimestampMixin, Base):
         index=True,
     )
 
-    customer: Mapped["Customer | None"] = relationship(back_populates="inquiries")
+    customer = relationship("Customer", back_populates="inquiries")

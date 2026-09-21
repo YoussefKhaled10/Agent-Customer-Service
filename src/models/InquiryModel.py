@@ -14,16 +14,22 @@ class InquiryModel:
             email=email.strip().lower(), phone=phone.strip() if phone else None,
             subject=subject.strip(), content=content.strip(), priority=priority,
             status=InquiryStatus.OPEN)
-        session.add(inquiry); session.flush(); return inquiry
+        session.add(inquiry)
+        session.flush()
+        return inquiry
 
     @classmethod
     def list(cls, session: Session, status: InquiryStatus | None = None) -> list[CustomerInquiry]:
         statement = select(CustomerInquiry)
-        if status: statement = statement.where(CustomerInquiry.status == status)
+        if status:
+            statement = statement.where(CustomerInquiry.status == status)
         return list(session.scalars(statement.order_by(CustomerInquiry.created_at.desc())).all())
 
     @classmethod
     def update_status(cls, session: Session, inquiry_id: int, status: InquiryStatus) -> CustomerInquiry:
         inquiry = session.get(CustomerInquiry, inquiry_id)
-        if inquiry is None: raise ValueError("Inquiry was not found.")
-        inquiry.status = status; session.flush(); return inquiry
+        if inquiry is None:
+            raise ValueError("Inquiry was not found.")
+        inquiry.status = status
+        session.flush()
+        return inquiry

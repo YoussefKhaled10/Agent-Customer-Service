@@ -4,9 +4,9 @@ from datetime import datetime
 from typing import Any
 
 from pgvector.sqlalchemy import Vector
-from sqlalchemy import DateTime, Enum, ForeignKey, Integer, String, Text, UniqueConstraint, func
+from sqlalchemy import Boolean, Column, Integer, DateTime, Enum, ForeignKey, String, Text, UniqueConstraint, func
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import relationship
 
 from src.models.db_schemes.agent_db.base import Base, TimestampMixin
 from src.models.db_schemes.agent_db.enums import IndexStatus, KnowledgeCategory
@@ -19,9 +19,9 @@ EMBEDDING_DIMENSION = 384
 class KnowledgeDocument(TimestampMixin, Base):
     __tablename__ = "knowledge_documents"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    title: Mapped[str] = mapped_column(String(250), nullable=False, index=True)
-    category: Mapped[KnowledgeCategory] = mapped_column(
+    id = Column(Integer, primary_key=True)
+    title = Column(String(250), nullable=False, index=True)
+    category = Column(
         Enum(
             KnowledgeCategory,
             name="knowledge_category",
@@ -31,10 +31,10 @@ class KnowledgeDocument(TimestampMixin, Base):
         nullable=False,
         index=True,
     )
-    content: Mapped[str] = mapped_column(Text, nullable=False)
-    tags: Mapped[list[str]] = mapped_column(JSONB, default=list, nullable=False)
-    is_active: Mapped[bool] = mapped_column(default=True, nullable=False, index=True)
-    index_status: Mapped[IndexStatus] = mapped_column(
+    content = Column(Text, nullable=False)
+    tags = Column(JSONB, default=list, nullable=False)
+    is_active = Column(Boolean, default=True, nullable=False, index=True)
+    index_status = Column(
         Enum(
             IndexStatus,
             name="knowledge_index_status",
@@ -44,15 +44,15 @@ class KnowledgeDocument(TimestampMixin, Base):
         nullable=False,
         index=True,
     )
-    index_error: Mapped[str | None] = mapped_column(Text, nullable=True)
-    content_hash: Mapped[str | None] = mapped_column(String(64), nullable=True, index=True)
-    embedding_model: Mapped[str | None] = mapped_column(String(200), nullable=True)
-    embedding_dimension: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    last_indexed_at: Mapped[datetime | None] = mapped_column(
+    index_error = Column(Text, nullable=True)
+    content_hash = Column(String(64), nullable=True, index=True)
+    embedding_model = Column(String(200), nullable=True)
+    embedding_dimension = Column(Integer, nullable=True)
+    last_indexed_at = Column(
         DateTime(timezone=True), nullable=True
     )
 
-    chunks: Mapped[list["KnowledgeChunk"]] = relationship(
+    chunks = relationship("KnowledgeChunk", 
         back_populates="document", cascade="all, delete-orphan", lazy="selectin"
     )
 
@@ -63,24 +63,24 @@ class KnowledgeChunk(Base):
         UniqueConstraint("document_id", "chunk_index", name="document_chunk_index_unique"),
     )
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    document_id: Mapped[int] = mapped_column(
+    id = Column(Integer, primary_key=True)
+    document_id = Column(
         ForeignKey("knowledge_documents.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
-    chunk_index: Mapped[int] = mapped_column(Integer, nullable=False)
-    chunk_identifier: Mapped[str] = mapped_column(
+    chunk_index = Column(Integer, nullable=False)
+    chunk_identifier = Column(
         String(150), unique=True, nullable=False, index=True
     )
-    content: Mapped[str] = mapped_column(Text, nullable=False)
-    token_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    chunk_metadata: Mapped[dict[str, Any]] = mapped_column(JSONB, default=dict, nullable=False)
-    embedding: Mapped[list[float]] = mapped_column(
+    content = Column(Text, nullable=False)
+    token_count = Column(Integer, nullable=True)
+    chunk_metadata = Column(JSONB, default=dict, nullable=False)
+    embedding = Column(
         Vector(EMBEDDING_DIMENSION), nullable=False
     )
-    created_at: Mapped[datetime] = mapped_column(
+    created_at = Column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
 
-    document: Mapped["KnowledgeDocument"] = relationship(back_populates="chunks")
+    document = relationship("KnowledgeDocument", back_populates="chunks")
